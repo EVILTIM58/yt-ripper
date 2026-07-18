@@ -1,0 +1,26 @@
+# UGOS Project compose for yt-ripper.
+# Paste into UGOS Docker -> Project -> + Create Project
+#   Name: yt-ripper    Path: /volume1/docker/yt-ripper
+# Deploy with "Pull the latest image" ticked.
+#
+# NO build: directives (UGOS silently fails them — playbook Section 5.1).
+# NO cloudflared block (shared warvid-cloudflared handles all traffic).
+
+services:
+  yt-ripper:
+    image: ghcr.io/eviltim58/yt-ripper:latest
+    container_name: yt-ripper
+    restart: unless-stopped
+    ports:
+      - "8453:8000"   # 8453 = yt-ripper's unique host port (see playbook port table)
+    environment:
+      DOWNLOAD_DIR: /downloads
+      MAX_CONCURRENT: "3"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./downloads:/downloads
+    networks: [yt-ripper]
+
+networks:
+  yt-ripper:
+    driver: bridge
